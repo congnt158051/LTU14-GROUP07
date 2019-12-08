@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  redis:
+    image: redis
+  webserver:
+    build: ./webserver
+    ports:
+      - "80:80"
+    volumes: 
+      - ./webserver:/app
+    depends_on:
+      - redis
