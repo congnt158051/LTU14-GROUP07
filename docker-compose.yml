@@ -11,3 +11,16 @@ services:
       - ./webserver:/app
     depends_on:
       - redis
+  modelserver:
+    build: ./modelserver
+    depends_on:
+      - redis
+    networks:
+      - deployml_network
+    volumes: 
+      - ./modelserver:/app
+    env_file:
+      - app.env
+    environment:
+      - SERVER_SLEEP=0.25  # Time in ms between each poll by model server against Redis
+      - BATCH_SIZE=32
