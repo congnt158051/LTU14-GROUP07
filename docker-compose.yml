@@ -3,16 +3,9 @@ version: '3'
 services:
   redis:
     image: redis
-  webserver:
-    build: ./webserver
-    ports:
-      - "80:80"
-    volumes: 
-      - ./webserver:/app
-    depends_on:
-      - redis
-    env_file:
-      - app.env
+    networks:
+      - deployml_network
+
   modelserver:
     build: ./modelserver
     depends_on:
@@ -24,5 +17,24 @@ services:
     env_file:
       - app.env
     environment:
-      - SERVER_SLEEP=0.25  # Time in ms between each poll by model server against Redis
+      - SERVER_SLEEP=0.25
       - BATCH_SIZE=32
+
+  webserver:
+    build: ./webserver
+    ports:
+      - "80:80"
+    networks:
+      - deployml_network
+    volumes: 
+      - ./webserver:/app
+    depends_on:
+      - redis
+    env_file:
+      - app.env
+    environment:
+      - CLIENT_SLEEP=0.25 
+      - CLIENT_MAX_TRIES=100
+
+networks:
+    deployml_network:
