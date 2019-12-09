@@ -12,7 +12,7 @@ import redis
 from fastapi import FastAPI, File, HTTPException
 
 app = FastAPI()
-db = redis.StrictRedis(host='redis')
+db = redis.StrictRedis(host=os.environ.get("REDIS_HOST"))
 
 @app.get("/")
 def hello():
@@ -34,4 +34,4 @@ def predict(request: Request, img_file: bytes=File(...)):
         k = str(uuid.uuid4())
         image = base64.b64encode(image).decode("utf-8")
         d = {"id": k, "image": image, "height":height_image, "width": width_image}
-        db.rpush('image_queue', json.dumps(d))
+        db.rpush(os.environ.get("IMAGE_QUEUE"), json.dumps(d))

@@ -11,6 +11,8 @@ services:
       - ./webserver:/app
     depends_on:
       - redis
+    env_file:
+      - app.env
   modelserver:
     build: ./modelserver
     depends_on:
