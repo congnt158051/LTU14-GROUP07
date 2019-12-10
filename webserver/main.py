@@ -2,7 +2,6 @@ import time
 import uuid
 import numpy as np
 from PIL import Image
-from starlette.requests import Request
 import io
 import base64
 import json
@@ -10,9 +9,19 @@ import os
 
 import redis
 from fastapi import FastAPI, File, HTTPException
+from starlette.requests import Request
+from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 db = redis.StrictRedis(host=os.environ.get("REDIS_HOST"))
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 CLIENT_MAX_TRIES = int(os.environ.get("CLIENT_MAX_TRIES"))
 
