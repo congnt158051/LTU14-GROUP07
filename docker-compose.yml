@@ -7,6 +7,7 @@ services:
       - deployml_network
 
   modelserver:
+    # image: ndtu1511/project_dsa_modelserver:model_2
     build: ./modelserver
     depends_on:
       - redis
@@ -19,8 +20,16 @@ services:
     environment:
       - SERVER_SLEEP=0.25
       - BATCH_SIZE=32
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+        - node.role == worker
 
   webserver:
+    # image: ndtu1511/project_dsa_webserver:web_2
     build: ./webserver
     ports:
       - "80:80"
@@ -35,6 +44,10 @@ services:
     environment:
       - CLIENT_SLEEP=0.25 
       - CLIENT_MAX_TRIES=100
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
 
 networks:
     deployml_network:
